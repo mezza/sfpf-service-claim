@@ -1,5 +1,5 @@
 ' Sub RemoveValidation()
-'     Worksheets(Service).Range(S_PROJECT & 2 & ":" & S_PROJECT & 10).Select
+'     Worksheets("Services").Range(S_PROJECT & 2 & ":" & S_PROJECT & 10).Select
 '     With Selection.Validation
 '         .Delete
 '     End With

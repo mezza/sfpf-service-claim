@@ -117,12 +117,12 @@ Public Function GetTask(ByVal sheet As String, ByVal row As Long) As Boolean
   Dim matches As Double
   Dim result_tor_range As String
     
-  If Trim(sheet) = Service Then
+  If Trim(sheet) = "Services" Then
     Col_TORs = S_TOR
     Col_Project = S_PROJECT
     Col_Task = S_TASK
   End If
-  If Trim(sheet) = Expense Then
+  If Trim(sheet) = "Expenses" Then
     Col_TORs = E_TOR
     Col_Project = E_PROJECT
     Col_Task = E_TASK
@@ -195,11 +195,11 @@ Public Function GetGrantCode(ByVal sheet As String, ByVal row As Long) As Boolea
   Dim matches As Double
   Dim result_tor_range As String
     
-  If Trim(sheet) = Service Then
+  If Trim(sheet) = "Services" Then
     Col_TORTASKID = S_TORTASKID
     Col_GrantCode = S_GRANT_CODE
   End If
-  If Trim(sheet) = Expense Then
+  If Trim(sheet) = "Expenses" Then
     Col_TORTASKID = E_TORTASKID
     Col_GrantCode = E_GRANTCODE
   End If
