@@ -277,7 +277,7 @@ Public Function SetTorTaskId(ByVal sheet As String, ByVal row As Long) As Boolea
   lookup_value = LEFT(Worksheets(sheet).Range(Col_Task & row).Value,48) & "*"
   res = Application.WorksheetFunction.VLookup(lookup_value, Range("TaskNodeIDs"), 2, False)
   Worksheets(sheet).Range(Col_TORTASKID & row).Value = res
-  Worksheets(sheet).Range(Col_TORTASKID & row).Interior.ColorIndex = 4
+  Worksheets(sheet).Range(Col_TORTASKID & row).Interior.ColorIndex = 5
   
   myError:
     If Err.Number <> 0 Then
@@ -320,7 +320,7 @@ Public Function SetGrantCodeID(ByVal sheet As String, ByVal row As Long) As Bool
   lookup_value = Worksheets(sheet).Range(Col_GrantCode & row).Value
   res = Application.WorksheetFunction.VLookup(lookup_value, Range("GrantIDs"), 2, False)
   Worksheets(sheet).Range(Col_GrantCodeID & row).Value = res
-  Worksheets(sheet).Range(Col_GrantCodeID & row).Interior.ColorIndex = 4
+  Worksheets(sheet).Range(Col_GrantCodeID & row).Interior.ColorIndex = 5
   
 myError:
   If Err.Number <> 0 Then
@@ -333,38 +333,60 @@ End Function
 'Function to validate all sheets and highlight cells with issues
 Public Function ValidateSheets() As Long
   Application.EnableEvents = False
+  Application.ScreenUpdating = FALSE
 
-  Dim lastRow As Long
+  Dim lastRowServices As Long
+  Dim lastRowExpenses As Long
   Dim invalidCells as Long
   
-  lastRow = Worksheets("Services").Cells.SpecialCells(xlCellTypeLastCell).row
+  lastRowServices = Worksheets("Services").Cells.SpecialCells(xlCellTypeLastCell).row
+  'SpecialCells can return an erroneous last row occassionally so let's iterate upwards
+  Do Until Application.WorksheetFunction.CountBlank(Worksheets("Services").Range(S_TOR & lastRowServices, S_GRANTCODEID & lastRowServices)) < S_GRANTCODEID_INDEX
+    lastRowServices = lastRowServices - 1
+  Loop 
+  
   invalidCells = 0
   
+  If lastRowServices > 1 Then
   'Task, Date, Hours worked, Grant code, Report, TORTASKID, GRANTCODEID for Services
-  invalidCells = invalidCells + ValidateColumn("Services", S_TASK, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Services", S_DATE, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Services", S_HOURS, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Services", S_GRANT_CODE, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Services", S_REPORT, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Services", S_TORTASKID, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Services", S_GRANTCODEID, lastRow)
+  invalidCells = invalidCells + ValidateColumn("Services", S_TASK, lastRowServices)
+  invalidCells = invalidCells + ValidateColumn("Services", S_DATE, lastRowServices)
+  invalidCells = invalidCells + ValidateColumn("Services", S_HOURS, lastRowServices)
+  invalidCells = invalidCells + ValidateColumn("Services", S_GRANT_CODE, lastRowServices)
+  invalidCells = invalidCells + ValidateColumn("Services", S_REPORT, lastRowServices)
+  invalidCells = invalidCells + ValidateColumn("Services", S_TORTASKID, lastRowServices)
+  invalidCells = invalidCells + ValidateColumn("Services", S_GRANTCODEID, lastRowServices)
+  End If
   
-  lastRow = Worksheets("Expenses").Cells.SpecialCells(xlCellTypeLastCell).row
+  lastRowExpenses = Worksheets("Expenses").Cells.SpecialCells(xlCellTypeLastCell).row
+  'SpecialCells can return an erroneous last row occassionally so let's iterate upwards
+  
+  Do Until Application.WorksheetFunction.CountBlank(Worksheets("Expenses").Range(E_TOR & lastRowExpenses, E_GRANTCODEID & lastRowExpenses)) < E_GRANTCODEID_INDEX
+    lastRowExpenses = lastRowExpenses - 1
+  Loop 
 
+  If lastRowExpenses > 1 Then 
   'Task, Date, US amount, Description, Expenses Category, Receipt page ID, Grant code, TORTASKID, GRANTCODEID for Expenses
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_TASK, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_DATE, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_US_AMOUNT, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_DESCRIPTION, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_CATEGORY, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_RECEIPT_PAGE, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_GRANTCODE, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_TORTASKID, lastRow)
-  invalidCells = invalidCells + ValidateColumn("Expenses", E_GRANTCODEID, lastRow)
-    
-  'Check for any existing cells that are coloured Red due to validation failures
-  invalidCells = invalidCells + CheckForReds  
-
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_TASK, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_DATE, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_US_AMOUNT, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_DESCRIPTION, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_CATEGORY, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_RECEIPT_PAGE, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_GRANTCODE, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_TORTASKID, lastRowExpenses)
+  invalidCells = invalidCells + ValidateColumn("Expenses", E_GRANTCODEID, lastRowExpenses)
+  End If
+  
+  If lastRowExpenses + lastRowServices = 2 Then
+    'There is nothing to prepare a report against
+    invalidCells = -1
+  Else
+    'Check for any existing cells that are coloured Red due to validation failures
+    invalidCells = invalidCells + CheckForReds
+  End If
+  
+  Application.ScreenUpdating = True
   Application.EnableEvents = True
   ValidateSheets = invalidCells
 End Function
@@ -374,9 +396,20 @@ Public Function ValidateColumn(sheetToCheck As String, columnToCheck As String, 
   Application.EnableEvents = False
   Dim invalidRange as Range
   On Error GoTo myError
-  Set invalidRange = Worksheets(sheetToCheck).Range(columnToCheck & 2, columnToCheck & lastRow).SpecialCells(xlCellTypeBlanks)
-  invalidRange.Interior.ColorIndex = 3
-  ValidateColumn = invalidRange.Count
+  If lastRow < 2 Then
+    ValidateColumn = 0
+  End If
+  If lastRow = 2 Then
+    If Worksheets(sheetToCheck).Range(columnToCheck & 2).Value = Empty Then
+      Worksheets(sheetToCheck).Range(columnToCheck & 2).Interior.ColorIndex = 3
+      ValidateColumn = 0
+    End If
+  End If
+  If lastRow > 2 Then
+    Set invalidRange = Worksheets(sheetToCheck).Range(columnToCheck & 2, columnToCheck & lastRow).SpecialCells(xlCellTypeBlanks)
+    invalidRange.Interior.ColorIndex = 3
+    ValidateColumn = 0
+  End If
 myError:
   Application.EnableEvents = True
 End Function

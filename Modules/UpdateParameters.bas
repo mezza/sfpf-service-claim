@@ -1,7 +1,9 @@
 Sub URL_Get_Query()
+  Application.Cursor = xlWait
   On Error GoTo myError
 
   If MsgBox("Do you want to update the parameters for this Service claim? You must be online to do so.", vbYesNo) = vbNo Then
+    Application.Cursor = xlDefault
     Exit Sub
   End If
     
@@ -32,6 +34,7 @@ Sub URL_Get_Query()
     MsgBox Worksheets("MySheet").Range("A1").Value
     f = DeleteSheet("MySheet")
     Worksheets("README").Select
+    Application.Cursor = xlDefault
     Exit Sub
   End If
         
@@ -40,6 +43,7 @@ myError:
     f = DeleteSheet("MySheet")
     Worksheets("README").Select
     MsgBox "There was a problem getting data from Planet. Please contact support."
+    Application.Cursor = xlDefault
     Exit Sub
   End If
                 
@@ -53,6 +57,7 @@ myError:
         
   Worksheets("README").Select
   MsgBox "Your parameters have been updated successfully. Please save the file and continue completing it."
+  Application.Cursor = xlDefault
 
 End Sub
 

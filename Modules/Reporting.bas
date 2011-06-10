@@ -6,13 +6,19 @@
 ' End Sub
 
 Sub PrepareReport()
+  Application.Cursor = xlWait
+  Application.ScreenUpdating = FALSE
   Dim f As Long
   f = ValidateSheets
   If f > 0 Then
     MsgBox "There are " & f & " errors. Please check the Red cells."
+  ElseIf f < 0 Then
+    MsgBox "There is nothing to prepare a report for. Please enter some data on Services and Expenses."
   Else
     CompileReport
-  End If 
+  End If
+  Application.ScreenUpdating = TRUE
+  Application.Cursor = xlDefault
 End Sub
 
 Private Sub CompileReport()
