@@ -1,3 +1,4 @@
+Attribute VB_Name = "Module2"
 'Looks up Currencies from named range
 Public Function GetCurrency(ByVal sheet As String, ByVal row As Long) As Boolean
   
@@ -6,7 +7,7 @@ Public Function GetCurrency(ByVal sheet As String, ByVal row As Long) As Boolean
   Worksheets(sheet).Range(E_CURRENCY & row).Select
   With Selection.Validation
     .Delete
-    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=Currencies" 
+    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=Currencies"
     .IgnoreBlank = True
     .InCellDropdown = True
     .InputTitle = ""
@@ -15,7 +16,7 @@ Public Function GetCurrency(ByVal sheet As String, ByVal row As Long) As Boolean
     .ErrorMessage = ""
     .ShowInput = True
     .ShowError = True
-  End With    
+  End With
    
 myError:
   If Err.Number <> 0 Then
@@ -32,7 +33,7 @@ Public Function GetExpensesCategory(ByVal sheet As String, ByVal row As Long) As
   Worksheets(sheet).Range(E_CATEGORY & row).Select
   With Selection.Validation
     .Delete
-    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=ExpenseCategories" 
+    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=ExpenseCategories"
     .IgnoreBlank = True
     .InCellDropdown = True
     .InputTitle = ""
@@ -41,7 +42,7 @@ Public Function GetExpensesCategory(ByVal sheet As String, ByVal row As Long) As
     .ErrorMessage = ""
     .ShowInput = True
     .ShowError = True
-  End With    
+  End With
    
 myError:
   If Err.Number <> 0 Then
@@ -59,7 +60,7 @@ Public Function GetTORs(ByVal sheet As String, ByVal row As Long) As Boolean
   Worksheets(sheet).Range(S_TOR & row).Select
   With Selection.Validation
     .Delete
-    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=TORs" 
+    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=TORs"
     .IgnoreBlank = True
     .InCellDropdown = True
     .InputTitle = ""
@@ -68,7 +69,7 @@ Public Function GetTORs(ByVal sheet As String, ByVal row As Long) As Boolean
     .ErrorMessage = ""
     .ShowInput = True
     .ShowError = True
-  End With    
+  End With
    
 myError:
   If Err.Number <> 0 Then
@@ -86,7 +87,7 @@ Public Function GetProjects(ByVal sheet As String, ByVal row As Long) As Boolean
   Worksheets(sheet).Range(S_PROJECT & row).Select
   With Selection.Validation
     .Delete
-    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=Projects" 
+    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=Projects"
     .IgnoreBlank = True
     .InCellDropdown = True
     .InputTitle = ""
@@ -95,7 +96,7 @@ Public Function GetProjects(ByVal sheet As String, ByVal row As Long) As Boolean
     .ErrorMessage = ""
     .ShowInput = True
     .ShowError = True
-  End With    
+  End With
    
 myError:
   If Err.Number <> 0 Then
@@ -129,7 +130,7 @@ Public Function GetTask(ByVal sheet As String, ByVal row As Long) As Boolean
   End If
     
   ' Need to check whether TOR or Project has been chosen
-  If Trim(CStr(Worksheets(sheet).Range(Col_TORs & row).Value)) <> "" and _
+  If Trim(CStr(Worksheets(sheet).Range(Col_TORs & row).Value)) <> "" And _
     Trim(CStr(Worksheets(sheet).Range(Col_Project & row).Value)) <> "" Then
     MsgBox "Please select EITHER a TOR item or a Project. Not both"
     Application.EnableEvents = True
@@ -153,7 +154,7 @@ Public Function GetTask(ByVal sheet As String, ByVal row As Long) As Boolean
   If raw_value = "" Then
     Application.EnableEvents = True
     Exit Function
-  End If 
+  End If
     
   lookup_value = Left(raw_value, 48) & "*"
 
@@ -173,7 +174,7 @@ Public Function GetTask(ByVal sheet As String, ByVal row As Long) As Boolean
     .ErrorMessage = ""
     .ShowInput = True
     .ShowError = True
-  End With    
+  End With
 
     
 myError:
@@ -207,10 +208,10 @@ Public Function GetGrantCode(ByVal sheet As String, ByVal row As Long) As Boolea
   lookup_value = Worksheets(sheet).Range(Col_TORTASKID & row).Value
     
   ' No need to do anything if neither TOR or Project has been set
-  If NOT lookup_value > 0 Then
+  If Not lookup_value > 0 Then
     Application.EnableEvents = True
     Exit Function
-  End If 
+  End If
     
   Set search_range = Range("NodeIDGrants").Columns(1)
 
@@ -230,7 +231,7 @@ Public Function GetGrantCode(ByVal sheet As String, ByVal row As Long) As Boolea
     .ErrorMessage = ""
     .ShowInput = True
     .ShowError = True
-  End With    
+  End With
 
     
 myError:
@@ -247,7 +248,7 @@ Public Function SetTorTaskId(ByVal sheet As String, ByVal row As Long) As Boolea
   Dim Col_Task As String
   Dim Col_TORTASKID As String
   Dim lookup_value As String
-  Dim res as Variant
+  Dim res As Variant
         
   On Error GoTo myError
     
@@ -274,12 +275,12 @@ Public Function SetTorTaskId(ByVal sheet As String, ByVal row As Long) As Boolea
   End If
   
   ' Otherwise let's lookup the selected Task in P_TASKS_IDs_1 and P_TASKS_IDs_2
-  lookup_value = LEFT(Worksheets(sheet).Range(Col_Task & row).Value,48) & "*"
+  lookup_value = Left(Worksheets(sheet).Range(Col_Task & row).Value, 48) & "*"
   res = Application.WorksheetFunction.VLookup(lookup_value, Range("TaskNodeIDs"), 2, False)
   Worksheets(sheet).Range(Col_TORTASKID & row).Value = res
   Worksheets(sheet).Range(Col_TORTASKID & row).Interior.ColorIndex = 5
   
-  myError:
+myError:
     If Err.Number <> 0 Then
       MsgBox "Error setting TORTASKID."
     End If
@@ -296,7 +297,7 @@ Public Function SetGrantCodeID(ByVal sheet As String, ByVal row As Long) As Bool
   Dim Col_Task As String
   Dim Col_TORTASKID As String
   Dim lookup_value As String
-  Dim res as Variant
+  Dim res As Variant
         
   On Error GoTo myError
     
@@ -310,7 +311,7 @@ Public Function SetGrantCodeID(ByVal sheet As String, ByVal row As Long) As Bool
   End If
     
   ' If nothing has been entered in the Grant code column then exit
-  If NOT Worksheets(sheet).Range(Col_GrantCode & row).Value > 0 Then
+  If Not Worksheets(sheet).Range(Col_GrantCode & row).Value > 0 Then
     Worksheets(sheet).Range(Col_GrantCodeID & row).Value = ""
     Application.EnableEvents = True
     Exit Function
@@ -333,17 +334,17 @@ End Function
 'Function to validate all sheets and highlight cells with issues
 Public Function ValidateSheets() As Long
   Application.EnableEvents = False
-  Application.ScreenUpdating = FALSE
+  Application.ScreenUpdating = False
 
   Dim lastRowServices As Long
   Dim lastRowExpenses As Long
-  Dim invalidCells as Long
+  Dim invalidCells As Long
   
   lastRowServices = Worksheets("Services").Cells.SpecialCells(xlCellTypeLastCell).row
   'SpecialCells can return an erroneous last row occassionally so let's iterate upwards
   Do Until Application.WorksheetFunction.CountBlank(Worksheets("Services").Range(S_TOR & lastRowServices, S_GRANTCODEID & lastRowServices)) < S_GRANTCODEID_INDEX
     lastRowServices = lastRowServices - 1
-  Loop 
+  Loop
   
   invalidCells = 0
   
@@ -363,9 +364,9 @@ Public Function ValidateSheets() As Long
   
   Do Until Application.WorksheetFunction.CountBlank(Worksheets("Expenses").Range(E_TOR & lastRowExpenses, E_GRANTCODEID & lastRowExpenses)) < E_GRANTCODEID_INDEX
     lastRowExpenses = lastRowExpenses - 1
-  Loop 
+  Loop
 
-  If lastRowExpenses > 1 Then 
+  If lastRowExpenses > 1 Then
   'Task, Date, US amount, Description, Expenses Category, Receipt page ID, Grant code, TORTASKID, GRANTCODEID for Expenses
   invalidCells = invalidCells + ValidateColumn("Expenses", E_TASK, lastRowExpenses)
   invalidCells = invalidCells + ValidateColumn("Expenses", E_DATE, lastRowExpenses)
@@ -394,7 +395,7 @@ End Function
 'Function to check a given column for null entries and style them red as well as return their count
 Public Function ValidateColumn(sheetToCheck As String, columnToCheck As String, lastRow As Long) As Long
   Application.EnableEvents = False
-  Dim invalidRange as Range
+  Dim invalidRange As Range
   On Error GoTo myError
   If lastRow < 2 Then
     ValidateColumn = 0
@@ -415,7 +416,7 @@ myError:
 End Function
 
 ' Delete named sheet
-Public Function DeleteSheet(ByVal sheet as String) As Boolean
+Public Function DeleteSheet(ByVal sheet As String) As Boolean
     Application.DisplayAlerts = False
     Sheets(sheet).Delete
     Application.DisplayAlerts = True
@@ -456,7 +457,7 @@ Public Function CalculateHours(ByVal Target As Excel.Range) As Boolean
   On Error GoTo myError
   
   'If no start time and end time supplied then exit
-  If IsEmpty(Worksheets(Target.Worksheet.Name).Range(S_START_TIME & Target.row).Value) and _
+  If IsEmpty(Worksheets(Target.Worksheet.Name).Range(S_START_TIME & Target.row).Value) And _
     IsEmpty(Worksheets(Target.Worksheet.Name).Range(S_END_TIME & Target.row).Value) Then
       Worksheets(Target.Worksheet.Name).Range(S_START_TIME & Target.row, S_HOURS & Target.row).Interior.ColorIndex = 0
       Worksheets(Target.Worksheet.Name).Range(S_HOURS & Target.row).Formula = ""
@@ -465,8 +466,8 @@ Public Function CalculateHours(ByVal Target As Excel.Range) As Boolean
   End If
     
   'If both are specified then set the formula and exit
-  If Not(IsEmpty(Worksheets(Target.Worksheet.Name).Range(S_START_TIME & Target.row).Value)) and _
-    Not(IsEmpty(Worksheets(Target.Worksheet.Name).Range(S_END_TIME & Target.row).Value)) Then
+  If Not (IsEmpty(Worksheets(Target.Worksheet.Name).Range(S_START_TIME & Target.row).Value)) And _
+    Not (IsEmpty(Worksheets(Target.Worksheet.Name).Range(S_END_TIME & Target.row).Value)) Then
       Worksheets(Target.Worksheet.Name).Range(S_START_TIME & Target.row, S_HOURS & Target.row).Interior.ColorIndex = 0
       Worksheets(Target.Worksheet.Name).Range(S_HOURS & Target.row).Formula = "=(RC[-1]-RC[-2])*24"
       If Worksheets(Target.Worksheet.Name).Range(S_HOURS & Target.row).Value <= 0 Then

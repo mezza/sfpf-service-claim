@@ -1,17 +1,25 @@
+Attribute VB_Name = "Parameters"
+Sub Update_Parameters_Dialog()
+    MonthForm.Show
+End Sub
+
 Sub URL_Get_Query()
-  Application.Cursor = xlWait
+
   On Error GoTo myError
 
-  If MsgBox("Do you want to update the parameters for this Service claim? You must be online to do so.", vbYesNo) = vbNo Then
-    Application.Cursor = xlDefault
+  If IsNull(Range("README!F5")) Then
+    MsgBox "There was a problem getting data from Planet. Please contact support."
     Exit Sub
   End If
     
   Dim str As String
   Dim url As String
-         
-  url = ThisWorkbook.CustomDocumentProperties("PLANET_URL") & ThisWorkbook.CustomDocumentProperties("ACCESS_KEY")
-       
+  
+  url = ThisWorkbook.CustomDocumentProperties("PLANET_URL") & ThisWorkbook.CustomDocumentProperties("ACCESS_KEY") & "/" & Range("README!F6").Value
+  
+  Application.Cursor = xlWait
+  
+  
   Dim f As Boolean
 
   Sheets.Add.Name = "MySheet"
@@ -27,7 +35,7 @@ Sub URL_Get_Query()
   End With
   
   ' Check that the new sheet has more than one row. If not, then find the error.
-  Dim lastRow as Long
+  Dim lastRow As Long
   lastRow = Worksheets("MySheet").Cells.SpecialCells(xlCellTypeLastCell).row
         
   If lastRow = 1 Then
@@ -48,7 +56,7 @@ myError:
   End If
                 
   'Delete Parameters sheet and rename new sheet
-  DeleteSheet("Parameters")
+  DeleteSheet ("Parameters")
   Worksheets(Worksheets.Count).Name = "Parameters"
 
   'Once the Parameters have been updated, then update all named ranges and hide the Parameters sheet

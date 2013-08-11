@@ -1,3 +1,4 @@
+Attribute VB_Name = "ConstantsAndVariables"
 'Services
 Public Const S_TOR  As String = "A"
 Public Const S_PROJECT  As String = "B"
@@ -93,4 +94,4 @@ Public Const R_TASK As String = "B"
 Public Const R_COLLATED_SUBMISSIONS As String = "C"
 Public Const R_EDITED_REPORT As String = "D"
 Public Const R_TORTASKID As String = "E"
-    
+

@@ -1,3 +1,4 @@
+Attribute VB_Name = "Reports"
 ' Sub RemoveValidation()
 '     Worksheets("Services").Range(S_PROJECT & 2 & ":" & S_PROJECT & 10).Select
 '     With Selection.Validation
@@ -7,7 +8,7 @@
 
 Sub PrepareReport()
   Application.Cursor = xlWait
-  Application.ScreenUpdating = FALSE
+  Application.ScreenUpdating = False
   Dim f As Long
   f = ValidateSheets
   If f > 0 Then
@@ -17,12 +18,12 @@ Sub PrepareReport()
   Else
     CompileReport
   End If
-  Application.ScreenUpdating = TRUE
+  Application.ScreenUpdating = True
   Application.Cursor = xlDefault
 End Sub
 
 Private Sub CompileReport()
-  Application.ScreenUpdating = FALSE
+  Application.ScreenUpdating = False
   Sheets.Add.Name = "Reports2"
   Sheets("Reports2").Move after:=Worksheets("Report")
   
@@ -36,7 +37,7 @@ Private Sub CompileReport()
     Range("A1:E1").Select
     Selection.Font.Bold = True
     Columns("A:D").Select
-    Selection.ColumnWidth = 35.0
+    Selection.ColumnWidth = 35#
     With Selection
         .HorizontalAlignment = xlGeneral
         .VerticalAlignment = xlTop
@@ -132,3 +133,4 @@ myError:
   End If
   Application.ScreenUpdating = True
 End Sub
+
