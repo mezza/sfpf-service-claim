@@ -61,7 +61,10 @@ Private Sub CompileReport()
   On Error GoTo myError
 
   report_row = 2
-  For Each torItem In Worksheets("Parameters").Range(P_TORTASKIDs & 2, Range(P_TORTASKIDs & 2).End(xlDown))
+  For Each torItem In Worksheets("Parameters").Range(P_TORTASKIDs & 1, Range(P_TORTASKIDs & 1).End(xlDown))
+    If torItem.row = 1 Then
+      GoTo skipTorItem
+    End If
     msg = ""
     rep = ""
     ' Are there matches in Services? Set msg
@@ -115,6 +118,7 @@ Private Sub CompileReport()
         Worksheets("Reports2").Range(R_TORTASKID & report_row) = torItem.Value
         report_row = report_row + 1
     End If
+skipTorItem:
   Next torItem
   f = DeleteSheet("Report")
   Worksheets(Worksheets("Reports2").Index).Name = "Report"
