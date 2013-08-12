@@ -8,6 +8,27 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+    Dim PS As Positions
+    'Stop user focus into Cell
+    Cancel = True
+    If ActiveCell.row = 1 Then Exit Sub
+    
+    If ActiveCell.Column = S_TOR_INDEX Or _
+    ActiveCell.Column = S_PROJECT_INDEX Or _
+    ActiveCell.Column = S_TASK_INDEX Or _
+    ActiveCell.Column = S_GRANT_CODE_INDEX Then
+        'Unload ServicesABCForm
+        PS = PositionForm(ServicesABCForm, ActiveCell, 0, 0, cstFhpFormLeftCellRight, cstFvpFormTopCellTop)
+        'Debug.Print PS.FrmTop
+        ServicesABCForm.Top = PS.FrmTop
+        ServicesABCForm.Left = PS.FrmLeft
+        Cancel = False
+        ServicesABCForm.Show Modal
+    End If
+            
+End Sub
+
 Private Sub Worksheet_Change(ByVal Target As Excel.Range)
 'SoftCalc 28-06-13 left functional for Expenses sheet
 
@@ -43,17 +64,21 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Excel.Range)
     Application.ScreenUpdating = False
 
     If ActiveCell.row = 1 Then Exit Sub
+    GoTo Skip
+    ' Delete the below code once we agree to use the DoubleClick event
     
     If ActiveCell.Column = S_TOR_INDEX Or ActiveCell.Column = S_PROJECT_INDEX Or ActiveCell.Column = S_TASK_INDEX Or ActiveCell.Column = S_GRANT_CODE_INDEX Then
         'Unload ServicesABCForm
+        'PS = PositionForm(ServicesABCForm, ActiveCell, 0, 0, cstFhpFormLeftCellRight, cstFvpFormTopCellTop)
         PS = PositionForm(ServicesABCForm, ActiveCell, 0, 0, cstFhpFormLeftCellRight, cstFvpFormTopCellTop)
+        Debug.Print PS.FrmTop
         ServicesABCForm.Top = PS.FrmTop
         ServicesABCForm.Left = PS.FrmLeft
         ServicesABCForm.Show Modal
     End If
     
     Application.ScreenUpdating = True
-
+Skip:
 End Sub
 
-    
+

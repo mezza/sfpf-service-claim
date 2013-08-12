@@ -2,8 +2,8 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} ServicesABCForm 
    Caption         =   "Services ABC Entry"
    ClientHeight    =   1740
-   ClientLeft      =   2000
-   ClientTop       =   -4400
+   ClientLeft      =   0
+   ClientTop       =   -880
    ClientWidth     =   16920
    OleObjectBlob   =   "ServicesABCForm.frx":0000
    StartUpPosition =   0  'Manual
@@ -60,8 +60,12 @@ On Error GoTo trap
             columnName = "Project"
         ElseIf ActiveCell.Column = E_TASK_INDEX Then
             columnName = "Task"
-        ElseIf ActiveCell.Column = E_GRANT_CODE_INDEX Then
+        ElseIf ActiveCell.Column = E_GRANTCODE_INDEX Then
             columnName = "Grant"
+        ElseIf ActiveCell.Column = E_CURRENCY_INDEX Then
+            columnName = "Currency"
+        ElseIf ActiveCell.Column = E_CATEGORY_INDEX Then
+            columnName = "Category"
         End If
     End If
     TitleText = columnName & " selection"
@@ -111,7 +115,7 @@ On Error GoTo trap
         'UBound doesn't work well when taskList is a single cell
         'taskSize = UBound(taskList)
         taskSize = taskRange.Rows.Count
-        ReDim arrayABC(0, taskSize)
+        ReDim arrayABC(0, taskSize - 1)
         For Each c In taskRange
             arrayABC(0, i) = c
             i = i + 1
@@ -134,6 +138,26 @@ On Error GoTo trap
         For Each c In grantRange
             arrayABC(0, i) = c
             i = i + 1
+        Next c
+        
+    ' Populate Currency DDL
+    ElseIf columnName = "Currency" Then
+    
+        ReDim arrayABC(0, Worksheets("Parameters").Range("Currencies").Rows.Count - 1)
+        For Each c In Worksheets("Parameters").Range("Currencies")
+            arrayABC(0, i) = c.Value
+            i = i + 1
+            
+        Next c
+    
+    ' Populate Category DDL
+    ElseIf columnName = "Category" Then
+    
+        ReDim arrayABC(0, Worksheets("Parameters").Range("ExpenseCategories").Rows.Count - 1)
+        For Each c In Worksheets("Parameters").Range("ExpenseCategories")
+            arrayABC(0, i) = c.Value
+            i = i + 1
+            
         Next c
     
     End If
@@ -221,6 +245,7 @@ exitGracefully:
     Exit Function
         
 myError:
+    
     MsgBox "No Tasks found for selected TOR item or Project"
     getTaskForForm = Null
     Application.EnableEvents = True
@@ -248,12 +273,11 @@ Public Function getGrantForForm(ByVal sheet As String, ByVal row As Long) As Var
     End If
     
     lookup_value = Worksheets(sheet).Range(Col_TORTASKID & row).Value
-    Debug.Print lookup_value
+    Debug.Print "MEZZA " & lookup_value
     
     ' No need to do anything if neither TOR or Project has been set
     If Not lookup_value > 0 Then
-        Application.EnableEvents = True
-        Exit Function
+        GoTo myError
     End If
     
     Set search_range = Range("NodeIDGrants").Columns(1)

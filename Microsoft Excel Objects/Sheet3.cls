@@ -35,8 +35,10 @@ Private Sub Worksheet_Change(ByVal Target As Excel.Range)
 End Sub
 
 Private Sub Worksheet_SelectionChange(ByVal Target As Excel.Range)
-    Dim flag As Boolean
     
+    Dim flag As Boolean
+    GoTo Skip
+
     ' Fetch choices for TOR column
     If Target.Column = E_TOR_INDEX And Target.row <> 1 Then
       flag = GetTORs(Target.Worksheet.Name, Target.row)
@@ -61,7 +63,29 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Excel.Range)
     If Target.Column = E_CATEGORY_INDEX And Target.row <> 1 Then
       flag = GetExpensesCategory(Target.Worksheet.Name, Target.row)
     End If
+Skip:
+End Sub
+
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+    Dim PS As Positions
+    'Stop user focus into Cell
+    Cancel = True
+    If ActiveCell.row = 1 Then Exit Sub
     
+    If ActiveCell.Column = E_TOR_INDEX Or _
+    ActiveCell.Column = E_PROJECT_INDEX Or _
+    ActiveCell.Column = E_TASK_INDEX Or _
+    ActiveCell.Column = E_GRANTCODE_INDEX Or _
+    ActiveCell.Column = E_CURRENCY_INDEX Or _
+    ActiveCell.Column = E_CATEGORY_INDEX Then
+        'Unload ServicesABCForm
+        PS = PositionForm(ServicesABCForm, ActiveCell, 0, 0, cstFhpFormLeftCellRight, cstFvpFormTopCellTop)
+        ServicesABCForm.Top = PS.FrmTop
+        ServicesABCForm.Left = PS.FrmLeft
+        Cancel = False
+        ServicesABCForm.Show Modal
+    End If
+            
 End Sub
 
 

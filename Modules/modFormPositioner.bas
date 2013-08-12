@@ -138,20 +138,20 @@ Public Type Positions
     NudgeDown As Single     ' allow the user to nudge the positioning by a few pixels.
     NudgeRight As Single
         
-#If VBA6 Then
+'#If VBA7 Then
     OrientationH As cstFormHorizontalPosition
     OrientationV As cstFormVerticalPosition
-#Else
-    OrientationH As Long
-    OrientationV As Long
-#End If
+'#Else
+'    OrientationH As Long
+'    OrientationV As Long
+'#End If
         
 End Type
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' End TYPE
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-#If VBA6 Then
+'#If VBA7 Then
     Public Enum cstFormHorizontalPosition
         cstFhpNull = -2             ' X = 0, left of screen
         cstFhpAppCenter = -1
@@ -188,41 +188,41 @@ End Type
         cstFvpFormCenterCellCenter
     End Enum
     
-#Else
-    
-    Public Const cstFhpNull As Long = -2                ' X = 0, left of screen
-    Public Const cstFhpAppCenter  As Long = -1
-    Public Const cstFhpAuto  As Long = 0
-        
-    Public Const cstFhpFormLeftCellLeft  As Long = 1
-    Public Const cstFhpFormLeftCellRight  As Long = 2
-    Public Const cstFhpFormLeftCellCenter  As Long = 3
-        
-    Public Const cstFhpFormRightCellLeft  As Long = 4
-    Public Const cstFhpFormRightCellRight  As Long = 5
-    Public Const cstFhpFormRightCellCenter  As Long = 6
-        
-    Public Const cstFhpFormCenterCellLeft  As Long = 7
-    Public Const cstFhpFormCenterCellRight  As Long = 8
-    Public Const cstFhpFormCenterCellCenter  As Long = 9
-    
-    Public Const cstFvpNull  As Long = -2                ' Y = 0, top of screen
-    Public Const cstFvpAppCenter  As Long = -1
-    Public Const cstFvpAuto  As Long = 0
-    
-    Public Const cstFvpFormTopCellTop As Long = 1
-    Public Const cstFvpFormTopCellBottom  As Long = 2
-    Public Const cstFvpFormTopCellCenter  As Long = 3
-        
-    Public Const cstFvpFormBottomCellTop  As Long = 4
-    Public Const cstFvpFormBottomCellBottom  As Long = 5
-    Public Const cstFvpFormBottomCellCenter  As Long = 6
-    
-    Public Const cstFvpFormCenterCellTop  As Long = 7
-    Public Const cstFvpFormCenterCellBottom  As Long = 8
-    Public Const cstFvpFormCenterCellCenter  As Long = 9
-   
-#End If
+'#Else
+'
+'    Public Const cstFhpNull As Long = -2                ' X = 0, left of screen
+'    Public Const cstFhpAppCenter  As Long = -1
+'    Public Const cstFhpAuto  As Long = 0
+'
+'    Public Const cstFhpFormLeftCellLeft  As Long = 1
+'    Public Const cstFhpFormLeftCellRight  As Long = 2
+'    Public Const cstFhpFormLeftCellCenter  As Long = 3
+'
+'    Public Const cstFhpFormRightCellLeft  As Long = 4
+'    Public Const cstFhpFormRightCellRight  As Long = 5
+'    Public Const cstFhpFormRightCellCenter  As Long = 6
+'
+'    Public Const cstFhpFormCenterCellLeft  As Long = 7
+'    Public Const cstFhpFormCenterCellRight  As Long = 8
+'    Public Const cstFhpFormCenterCellCenter  As Long = 9
+'
+'    Public Const cstFvpNull  As Long = -2                ' Y = 0, top of screen
+'    Public Const cstFvpAppCenter  As Long = -1
+'    Public Const cstFvpAuto  As Long = 0
+'
+'    Public Const cstFvpFormTopCellTop As Long = 1
+'    Public Const cstFvpFormTopCellBottom  As Long = 2
+'    Public Const cstFvpFormTopCellCenter  As Long = 3
+'
+'    Public Const cstFvpFormBottomCellTop  As Long = 4
+'    Public Const cstFvpFormBottomCellBottom  As Long = 5
+'    Public Const cstFvpFormBottomCellCenter  As Long = 6
+'
+'    Public Const cstFvpFormCenterCellTop  As Long = 7
+'    Public Const cstFvpFormCenterCellBottom  As Long = 8
+'    Public Const cstFvpFormCenterCellCenter  As Long = 9
+'
+'#End If
 
 Public Const cColHeaderHeight As Single = 9
 Public Const cRowHeaderWidth As Single = 20
@@ -234,19 +234,19 @@ Private Const cRightBump = 0
 Private Const cUpBump = 0
 Private Const cDownBump = 0
 
-#If VBA6 Then
+'#If VBA7 Then
 Function PositionForm(WhatForm As Object, AnchorRange As Range, _
     Optional NudgeRight As Single = 0, Optional NudgeDown As Single = 0, _
     Optional ByVal HorizOrientation As cstFormHorizontalPosition = cstFhpAuto, _
     Optional ByVal VertOrientation As cstFormVerticalPosition = cstFvpAuto) As Positions
 
-#Else
-Function PositionForm(WhatForm As Object, AnchorRange As Range, _
-    Optional NudgeRight As Single = 0, Optional NudgeDown As Single = 0, _
-    Optional ByVal HorizOrientation As Long = cstFhpAuto, _
-    Optional ByVal VertOrientation As Long = cstFvpAuto) As Positions
-
-#End If
+'#Else
+'Function PositionForm(WhatForm As Object, AnchorRange As Range, _
+'    Optional NudgeRight As Single = 0, Optional NudgeDown As Single = 0, _
+'    Optional ByVal HorizOrientation As Long = cstFhpAuto, _
+'    Optional ByVal VertOrientation As Long = cstFvpAuto) As Positions
+'
+'#End If
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' PositionForm
 '
@@ -693,3 +693,5 @@ P.FrmTop = P.AppTop + (P.AppHeight / 2) - (P.FrmHeight / 2)
 P.OrientationV = cstFvpAppCenter
 
 End Sub
+
+
