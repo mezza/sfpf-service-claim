@@ -34,7 +34,9 @@ Private Sub ClearButton_Click()
 End Sub
 
 Private Sub ProceedButton_Click()
+    Cancel = False
     ActiveCell.Value = ABCcombo.Value
+    ActiveWorkbook.Save
     ServicesABCForm.Hide
     Unload ServicesABCForm
 End Sub

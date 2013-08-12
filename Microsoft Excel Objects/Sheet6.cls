@@ -23,7 +23,7 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
         'Debug.Print PS.FrmTop
         ServicesABCForm.Top = PS.FrmTop
         ServicesABCForm.Left = PS.FrmLeft
-        Cancel = False
+        'Cancel = False
         ServicesABCForm.Show Modal
     End If
             

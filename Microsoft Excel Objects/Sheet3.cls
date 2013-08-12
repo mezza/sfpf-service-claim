@@ -82,7 +82,7 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
         PS = PositionForm(ServicesABCForm, ActiveCell, 0, 0, cstFhpFormLeftCellRight, cstFvpFormTopCellTop)
         ServicesABCForm.Top = PS.FrmTop
         ServicesABCForm.Left = PS.FrmLeft
-        Cancel = False
+        'Cancel = False
         ServicesABCForm.Show Modal
     End If
             
