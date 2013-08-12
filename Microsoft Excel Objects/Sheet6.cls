@@ -38,49 +38,21 @@ Private Sub Worksheet_Change(ByVal Target As Excel.Range)
 End Sub
 
 Private Sub Worksheet_SelectionChange(ByVal Target As Excel.Range)
-    
-'SoftCalc 28/06/13 switched off by to allow form entry
-GoTo Skip
-
-    Dim flag As Boolean
     Dim PS As Positions
     
-    ' Fetch choices for TOR column
-    If Target.Column = S_TOR_INDEX And Target.row <> 1 Then
-      flag = GetTORs(Target.Worksheet.Name, Target.row)
-    End If
-    ' Fetch choices for Project column
-    If Target.Column = S_PROJECT_INDEX And Target.row <> 1 Then
-      flag = GetProjects(Target.Worksheet.Name, Target.row)
-    End If
-    ' Fetch choices for Task column
-    If Target.Column = S_TASK_INDEX And Target.row <> 1 Then
-      flag = GetTask(Target.Worksheet.Name, Target.row)
-    End If
-    ' Fetch choices for Grant code column
-    If Target.Column = S_GRANT_CODE_INDEX And Target.row <> 1 Then
-      flag = GetGrantCode(Target.Worksheet.Name, Target.row)
-    End If
+    Application.ScreenUpdating = False
 
-Skip:
-
-Application.ScreenUpdating = False
-
-    'If ActiveCell.Column > 3 Then
-    '    ServicesABCForm.Hide
-    '    End
-    'End If
-    
     If ActiveCell.row = 1 Then Exit Sub
     
-    If ActiveCell.Column = 1 Or ActiveCell.Column = 2 Or ActiveCell.Column = 3 Then
+    If ActiveCell.Column = S_TOR_INDEX Or ActiveCell.Column = S_PROJECT_INDEX Or ActiveCell.Column = S_TASK_INDEX Or ActiveCell.Column = S_GRANT_CODE_INDEX Then
         'Unload ServicesABCForm
         PS = PositionForm(ServicesABCForm, ActiveCell, 0, 0, cstFhpFormLeftCellRight, cstFvpFormTopCellTop)
         ServicesABCForm.Top = PS.FrmTop
         ServicesABCForm.Left = PS.FrmLeft
         ServicesABCForm.Show Modal
     End If
-
+    
+    Application.ScreenUpdating = True
 
 End Sub
 

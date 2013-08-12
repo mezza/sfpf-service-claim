@@ -13,16 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Private Sub ABCcombo_Change()
 
-    If ABCcombo.Value <> "" Then ActiveCell.Value = ABCcombo.Value
-    
-    If ActiveCell.Column = 2 Then
-    
-        'feed for column C
-        Range("README!AQ50").Value = ABCcombo.Value
-        
-    End If
+Private Sub ABCcombo_Change()
 
 End Sub
 
@@ -35,22 +27,6 @@ Private Sub ServicesABCForm_Terminate()
     ServicesABCForm.Hide
     Unload ServicesABCForm
 End Sub
-
-Private Sub SelectButton_Click()
-
-    ServicesABCForm.Hide
-    If ActiveCell.Column = 1 Or ActiveCell.Column = 2 Then
-        ActiveCell.Offset(0, 1).Select
-    ElseIf ActiveCell.Column = 3 Then
-    
-        'MODIFY TO (0,-2) TO RETURN TO COL A
-        ActiveCell.Offset(0, 1).Select
-        ServicesABCForm.Hide
-        End
-    End If
-
-End Sub
-
 
 Private Sub ClearButton_Click()
     ActiveCell.Value = ""
@@ -65,27 +41,30 @@ End Sub
 
 Private Sub UserForm_Activate()
 On Error GoTo trap
+    Dim columnName As String
 
-    'If ActiveCell.Column > 3 Then
-    '    ServicesABCForm.Hide
-    '    End
-    'End If
-    'Dim PS As Positions
-
-    'PS = PositionForm(ServicesABCForm, ActiveCell, 0, 0, cstFhpFormLeftCellRight, cstFvpFormTopCellTop)
-    'ServicesABCForm.Top = PS.FrmTop
-    'ServicesABCForm.Left = PS.FrmLeft
-
-    If ActiveCell.Column = 1 Then
-        TitleText = Range("Services!A1").Value & " selection"
-        
-    ElseIf ActiveCell.Column = 2 Then
-        TitleText = Range("Services!B1").Value & " selection"
-        
-    ElseIf ActiveCell.Column = 3 Then
-        TitleText = Range("Services!C1").Value & " selection"
-    
+    If ActiveCell.Worksheet.Name = "Services" Then
+        If ActiveCell.Column = S_TOR_INDEX Then
+            columnName = "TOR"
+        ElseIf ActiveCell.Column = S_PROJECT_INDEX Then
+            columnName = "Project"
+        ElseIf ActiveCell.Column = S_TASK_INDEX Then
+            columnName = "Task"
+        ElseIf ActiveCell.Column = S_GRANT_CODE_INDEX Then
+            columnName = "Grant"
+        End If
+    ElseIf ActiveCell.Worksheet.Name = "Expenses" Then
+         If ActiveCell.Column = E_TOR_INDEX Then
+            columnName = "TOR"
+        ElseIf ActiveCell.Column = E_PROJECT_INDEX Then
+            columnName = "Project"
+        ElseIf ActiveCell.Column = E_TASK_INDEX Then
+            columnName = "Task"
+        ElseIf ActiveCell.Column = E_GRANT_CODE_INDEX Then
+            columnName = "Grant"
+        End If
     End If
+    TitleText = columnName & " selection"
 
     ABCcombo.Clear
     
@@ -93,11 +72,14 @@ On Error GoTo trap
     Dim i As Integer
     i = 0
     Dim taskList As Variant
-    Dim tasksize As Integer
-    
+    Dim taskSize As Integer
+    Dim taskRange As Range
+    Dim grantList As Variant
+    Dim grantSize As Integer
+    Dim grantRange As Range
     
     ' Populate TOR DDL
-    If ActiveCell.Column = 1 Then
+    If columnName = "TOR" Then
     
         ReDim arrayABC(0, Worksheets("Parameters").Range("TORs").Rows.Count - 1)
         For Each c In Worksheets("Parameters").Range("TORs")
@@ -107,7 +89,7 @@ On Error GoTo trap
         Next c
         
     ' Populate Project DDL
-    ElseIf ActiveCell.Column = 2 Then
+    ElseIf columnName = "Project" Then
     
         ReDim arrayABC(0, Worksheets("Parameters").Range("Projects").Rows.Count - 1)
         For Each c In Worksheets("Parameters").Range("Projects")
@@ -116,7 +98,7 @@ On Error GoTo trap
         Next c
     
     ' Populate Tasks DDL
-    ElseIf ActiveCell.Column = 3 Then
+    ElseIf columnName = "Task" Then
         
         taskList = getTaskForForm(ActiveCell.Worksheet.Name, ActiveCell.row)
         If IsNull(taskList) Then
@@ -124,16 +106,38 @@ On Error GoTo trap
             Exit Sub
         End If
         
-        tasksize = UBound(taskList)
+        Set taskRange = Worksheets("Parameters").Range(taskList)
         
-        ReDim arrayABC(0, tasksize - 1)
-        For Each c In taskList
+        'UBound doesn't work well when taskList is a single cell
+        'taskSize = UBound(taskList)
+        taskSize = taskRange.Rows.Count
+        ReDim arrayABC(0, taskSize)
+        For Each c In taskRange
             arrayABC(0, i) = c
             i = i + 1
         Next c
         
+    ' Populate Grants DDL
+    ElseIf columnName = "Grant" Then
+    
+        grantList = getGrantForForm(ActiveCell.Worksheet.Name, ActiveCell.row)
+        If IsNull(grantList) Then
+            ServicesABCForm.Hide
+            Exit Sub
+        End If
+        
+        Set grantRange = Worksheets("Parameters").Range(grantList)
+            
+        grantSize = grantRange.Rows.Count
+        Debug.Print grantSize
+        ReDim arrayABC(0, grantSize - 1)
+        For Each c In grantRange
+            arrayABC(0, i) = c
+            i = i + 1
+        Next c
     
     End If
+    
     ABCcombo.Column() = arrayABC
     ' Set column widths as wider than combobox size to allow scrolling
     ABCcombo.ColumnWidths = 1500
@@ -144,6 +148,7 @@ MsgBox "Error is: " & Err
 
 End Sub
 
+' Looks up the Task for the selected Project or TOR
 Public Function getTaskForForm(ByVal sheet As String, ByVal row As Long) As Variant
     Application.EnableEvents = False
     'Debug.Print "Sheet: " & sheet
@@ -156,7 +161,6 @@ Public Function getTaskForForm(ByVal sheet As String, ByVal row As Long) As Vari
     Dim match_location_offset As Double
     Dim matches As Double
     Dim result_tor_range_string As String
-    Dim result_tor_range As Range
     
     If Trim(sheet) = "Services" Then
         Col_TORs = S_TOR
@@ -206,10 +210,8 @@ Public Function getTaskForForm(ByVal sheet As String, ByVal row As Long) As Vari
     match_location_offset = Application.WorksheetFunction.Match(lookup_value, search_range, 0)
     matches = Application.WorksheetFunction.CountIf(search_range, lookup_value)
     
-    result_tor_range_string = Res_Task & "$" & (match_location_offset + 1) & ":$" & Res_Task & "$" & (match_location_offset + matches)
-    
-    Set result_tor_range = Worksheets("Parameters").Range(result_tor_range_string)
-    getTaskForForm = result_tor_range.Value
+    result_tor_range_string = "$" & Res_Task & "$" & (match_location_offset + 1) & ":$" & Res_Task & "$" & (match_location_offset + matches)
+    getTaskForForm = result_tor_range_string
     Application.EnableEvents = True
     Exit Function
     
@@ -224,3 +226,49 @@ myError:
     Application.EnableEvents = True
     
 End Function
+
+Public Function getGrantForForm(ByVal sheet As String, ByVal row As Long) As Variant
+    Application.EnableEvents = False
+    
+    On Error GoTo myError
+    
+    Dim lookup_value As Double
+    Dim search_range As Range
+    Dim match_location_offset As Double
+    Dim matches As Double
+    Dim result_tor_range_string As String
+    
+    If Trim(sheet) = "Services" Then
+        Col_TORTASKID = S_TORTASKID
+        Col_GrantCode = S_GRANT_CODE
+    End If
+    If Trim(sheet) = "Expenses" Then
+        Col_TORTASKID = E_TORTASKID
+        Col_GrantCode = E_GRANTCODE
+    End If
+    
+    lookup_value = Worksheets(sheet).Range(Col_TORTASKID & row).Value
+    Debug.Print lookup_value
+    
+    ' No need to do anything if neither TOR or Project has been set
+    If Not lookup_value > 0 Then
+        Application.EnableEvents = True
+        Exit Function
+    End If
+    
+    Set search_range = Range("NodeIDGrants").Columns(1)
+
+    match_location_offset = Application.WorksheetFunction.Match(lookup_value, search_range, 0)
+    matches = Application.WorksheetFunction.CountIf(search_range, lookup_value)
+    result_tor_range_string = "$" & P_ID_GRANTS_2 & "$" & (match_location_offset + 1) & ":$" & P_ID_GRANTS_2 & "$" & (match_location_offset + matches)
+    getGrantForForm = result_tor_range_string
+    Application.EnableEvents = True
+    Exit Function
+    
+myError:
+    MsgBox "No Grants found for selected Task."
+    getGrantForForm = Null
+    Application.EnableEvents = True
+End Function
+
+
